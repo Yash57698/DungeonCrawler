@@ -2,6 +2,15 @@ import pygame
 import random
 from Settings import *
 
+def DrawHealthBar(screen,health):
+    heartimg = pygame.transform.scale_by(pygame.image.load("./Assets/heartim.png"),0.045)
+    heart = pygame.Surface((50,50),pygame.SRCALPHA)
+    heart.blit(heartimg,(0,0))
+    pygame.draw.rect(screen,(0,0,0),pygame.Rect((815,40),(400,30)))
+    pygame.draw.rect(screen,(48, 39, 38),pygame.Rect((818,43),(394,24)))
+    pygame.draw.rect(screen,(204, 36, 36),pygame.Rect((818,43),(health*394,24)))
+    screen.blit(heart,(800,30))
+
 # Loads the TileMap from location given to it
 def loadTileMap(file):
     size = (64,64)
@@ -40,6 +49,7 @@ def scalemapup(map):
                 for p in range(-1,2):
                     for q in range(-1,2):
                         newmap[center[0]+p][center[1]+q] = 1
+    newmap[len(newmap)-7][len(newmap[0])-1] = 2
     return newmap
 
 #renders the map onto a specified screen
@@ -77,8 +87,8 @@ def renderMap(map,screen,tiles,offset):
                         elif ty<2:
                             screen.blit(tiles[42],(64*x,64*y))
                         else:
-                            screen.blit(tiles[48],(64*x,64*y))
-                if map[y][x] == 1:
+                            screen.blit(tiles[48],(64*x,64*y))       
+                elif map[y][x] == 1 or map[y][x] == 2:
                     if y!=0 and x!=0 and map[y-1][x] == 0 and map[y][x-1] ==0:
                         screen.blit(tiles[4],(64*x,64*y)) #top left roof
                     elif y!=0 and x!=(len(map[0])-1) and map[y-1][x] == 0 and map[y][x+1] ==0:
@@ -94,7 +104,12 @@ def renderMap(map,screen,tiles,offset):
                     elif y!=(len(map)-1) and map[y+1][x] == 0 and x!=(len(map[0])-1) and map[y][x+1] == 0:
                         screen.blit(tiles[59],(64*x,64*y))#bottom right wall
                     elif y!=(len(map)-1) and map[y+1][x] == 0:
-                        screen.blit(tiles[40],(64*x,64*y))#bottom wall
+                        random.seed(((len(map))*y)+x)
+                        ty = random.randint(0,100)
+                        if ty<4:
+                            screen.blit(tiles[29],(64*x,64*y))#flag wall
+                        else:
+                            screen.blit(tiles[40],(64*x,64*y))#bottom wall
                     elif y< (len(map)-2) and map[y+1][x] == 1 and map[y+2][x] == 0:
                         screen.blit(tiles[2],(64*x,64*y))#bottom roof
                     elif x!=0 and (map[y][x-1] == 0 or (map[y][x-1] == 1 and y!=(len(map)-1) and map[y+1][x-1] == 0)):
@@ -118,3 +133,5 @@ def renderMap(map,screen,tiles,offset):
                             screen.blit(tiles[24],(64*x,64*y))
                         else:
                             screen.blit(tiles[0],(64*x,64*y))
+                if y == len(map)-7 and x == len(map[0])-1:
+                    screen.blit(tiles[45],(64*x,64*y)) 

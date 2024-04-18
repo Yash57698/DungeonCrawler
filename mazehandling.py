@@ -28,7 +28,7 @@ def recursivebacktrack(maze,start):
 #creates an empty maze and populates it using recursivebacktracking
 def generateMaze(width,height):
     maze = []
-
+    width = width -1
     for i in range(height):
         row = []
         for j in range(width):
@@ -44,5 +44,8 @@ def generateMaze(width,height):
         for j in range(width):
             if maze[i][j] == 2:
                 maze[i][j] = 0
-    print(maze)
+    for i in range(height):
+        maze[i] = maze[i] + [1]
+    maze[-2][-1] = 0
     return maze
+
