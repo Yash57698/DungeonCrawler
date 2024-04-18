@@ -1,0 +1,31 @@
+{
+    "activeFile": "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx",
+    "expandedProjectPaths": [
+        "Assets",
+        ".",
+        "Assets/kenney_tinyDungeon",
+        "Assets/kenney_tinyDungeon/Tiled"
+    ],
+    "fileStates": {
+        "Assets/kenney_tinyDungeon/Tiled/sampleMap.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 94,
+                "y": 209.5
+            }
+        },
+        "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        }
+    },
+    "openFiles": [
+        "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx"
+    ],
+    "project": "tiled.tiled-project",
+    "recentFiles": [
+        "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx",
+        "Assets/kenney_tinyDungeon/Tiled/sampleMap.tmx"
+    ]
+}
