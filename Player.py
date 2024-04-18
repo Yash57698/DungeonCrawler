@@ -1,9 +1,7 @@
 import pygame
+from Settings import *
 
-SCREENSIZE = (1280,720)
-MAZEDIM = (10,10)
-TOTALMAZESIZE = (MAZEDIM[0]*3*64,MAZEDIM[1]*3*64)
-
+#implements the player Class
 class Player:
     bounds = (200,100)
     pos = pygame.Vector2(0,0)
@@ -14,23 +12,32 @@ class Player:
     curvel = pygame.Vector2(0,0)
     flipped = False
     idletime = 0 
+    walktime = 0
+
     def __init__(self,image,image2,pos):
         self.pos = pos
         self.image = image
         self.image2 = image2
 
+    #Renders the player on a screen object and also handles animations
     def render(self,screen):
-        #TO-DO : Idle animation + hopanimation
+
         if self.curvel.x != 0 or self.curvel.y != 0:
             self.idletime =0
+            self.walktime +=1
         else:
             self.idletime += 1
-
+            self.walktime = 0
         yoff =0
         if self.idletime > 20:
             yoff = (self.idletime%88)//11
-        if yoff >=4:
-            yoff = 7-yoff
+            if yoff >=4:
+                yoff = 7-yoff
+
+        if self.curvel.x != 0 or self.curvel.y != 0:
+            yoff = (self.walktime%15)//1
+            if yoff >=7:
+                yoff = 14-yoff
 
         im = self.image
         if self.idletime > 100:
@@ -38,6 +45,7 @@ class Player:
         
         screen.blit(im if self.flipped else pygame.transform.flip(im,True,False),(self.pos[0],self.pos[1]+yoff))
 
+    #moves the player according to WASD control and handles the screenscroll effect
     def move(self,dt,map):
         keys = pygame.key.get_pressed()
         

@@ -2,10 +2,10 @@ import pygame
 import random
 from utilityfunctions import *
 from Player import Player
+from mazehandling import generateMaze
+from Settings import *
 
-SCREENSIZE = (1280,720)
-MAZEDIM = (10,10)
-TOTALMAZESIZE = (MAZEDIM[0]*3*64,MAZEDIM[1]*3*64)
+
 
 pygame.init()
 screen = pygame.display.set_mode(SCREENSIZE)
@@ -27,18 +27,21 @@ map = [[0,0,0,0,0,1,0,0,0,0],
        [0,0,0,0,1,1,0,0,0,0],
        [0,0,0,0,1,1,0,0,0,0],
        [0,0,0,0,0,0,0,0,0,0]]
+
+map = generateMaze(MAZEDIM[0],MAZEDIM[1])
 map = scalemapup(map)
 
-p = Player(tiles[96],tiles[97],(300,100))
+p = Player(tiles[96],tiles[97],(128,128))
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     dt = clock.tick(60) / 1000
+    # print(clock.get_fps())
     
     
-    renderMap(map,backgroundelements,tiles)
+    renderMap(map,backgroundelements,tiles,p.offset)
     foregroundelements.fill((0,0,0,0))
     p.render(foregroundelements)
     
