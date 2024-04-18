@@ -43,12 +43,35 @@ def renderMap(map,screen,tiles):
     for y in range(len(map)):
         for x in range(len(map[0])):
             if map[y][x] == 0:
-                random.seed(((len(map))*y)+x)
-                ty = random.randint(0,9)
-                if ty<2:
-                    screen.blit(tiles[49],(64*x,64*y))
+                if y!=0 and map[y-1][x] == 1 and x!=0 and map[y][x-1] == 1:
+                    screen.blit(pygame.transform.flip(tiles[52],True,False),(64*x,64*y))#rounded shadow
+                elif x!=0 and map[y][x-1] == 1 and y!=0 and map[y-1][x-1] == 0 and map[y-1][x] == 0:
+                    screen.blit(pygame.transform.flip(pygame.transform.flip(tiles[53],True,True),True,False),(64*x,64*y))#smol round
+                elif y!=0 and map[y-1][x] == 0 and x!=0 and map[y][x-1] == 0 and map[y-1][x-1] == 1:
+                    screen.blit(tiles[53],(64*x,64*y))
+                elif x!=0 and map[y][x-1] == 1:
+                    random.seed(((len(map))*y)+x)
+                    ty = random.randint(0,9)
+                    tile = 50
+                    if ty<2:
+                        tile = 51
+                    screen.blit(pygame.transform.rotate(tiles[tile],90),(64*x,64*y))
+                elif y!=0 and map[y-1][x] == 1:
+                    random.seed(((len(map))*y)+x)
+                    ty = random.randint(0,9)
+                    tile = 50
+                    if ty<2:
+                        tile = 51
+                    screen.blit(pygame.transform.rotate(tiles[tile],0),(64*x,64*y))
                 else:
-                    screen.blit(tiles[48],(64*x,64*y))
+                    random.seed(((len(map))*y)+x)
+                    ty = random.randint(0,99)
+                    if ty>89:
+                        screen.blit(tiles[49],(64*x,64*y))
+                    elif ty<2:
+                        screen.blit(tiles[42],(64*x,64*y))
+                    else:
+                        screen.blit(tiles[48],(64*x,64*y))
             if map[y][x] == 1:
                 if y!=0 and x!=0 and map[y-1][x] == 0 and map[y][x-1] ==0:
                     screen.blit(tiles[4],(64*x,64*y)) #top left roof
