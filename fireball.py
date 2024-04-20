@@ -15,6 +15,7 @@ class Fireball:
         self.player = player
         self.hitbox = 0
         self.size = 0.025
+        self.damaged = False
         self.dirn = pygame.Vector2(self.player.pos[0]-self.pos[0],self.player.pos[1]-self.pos[1])
         if self.dirn[0] != 0 and self.dirn[1] !=0:
             self.dirn = pygame.Vector2.normalize(self.dirn)

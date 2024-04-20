@@ -8,9 +8,9 @@ class EvilWizard:
 
     def __init__(self,image,pos,tiles,player,map):
         self.map = map
-        self.score = WIZARDSCORE
+        self.score = Settings.WIZARDSCORE
         self.enemytype = "WIZARD"
-        self.hp = WIZARDHP
+        self.hp = Settings.WIZARDHP
         self.weaponid = MAGICSTAFF
         self.tiles = tiles
         self.velocity = 200
@@ -77,8 +77,8 @@ class EvilWizard:
                 angle = -(self.attacktime-80)
                 if(self.attacktime>150):
                     self.attack = -1
-        if(self.attack<0 and self.attacktime == 81):
-            enemies.append(Fireball(self.fireballimage,(self.pos[0]+60,self.pos[1]+32),self.tiles,self.player))
+        if(self.attack>0 and self.attacktime == 5):
+            enemies.append(Fireball(self.fireballimage,(self.pos[0]+16,self.pos[1]+16),self.tiles,self.player))
         weapon.blit(pygame.transform.rotate(self.tiles[self.weaponid],angle),(30,-(math.cos((angle*math.pi)/180)*10) +10 ))
         screen.blit(wiz if self.flipped else pygame.transform.flip(wiz,True,False),(self.pos[0],self.pos[1]+yoff))
         screen.blit(weapon if self.flipped else pygame.transform.flip(weapon,True,False),(self.pos[0],self.pos[1]+yoff-ywepoff) if self.flipped else (self.pos[0]-60,self.pos[1]+yoff-ywepoff))

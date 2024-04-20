@@ -7,9 +7,9 @@ import math
 class Ghost:
 
     def __init__(self,image,pos,tiles,player):
-        self.score = GHOSTSCORE
+        self.score = Settings.GHOSTSCORE
         self.enemytype = "GHOST"
-        self.hp = GHOSTHP
+        self.hp = Settings.GHOSTHP
         self.tiles = tiles
         self.velocity = 100
         self.pos = pygame.Vector2(pos[0],pos[1])

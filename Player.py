@@ -18,7 +18,7 @@ class Player:
         self.pos = pygame.Vector2(0,0)
         self.offset= pygame.Vector2(0,0)
         self.minoffset = pygame.Vector2(0,0)
-        self.maxoffset = pygame.Vector2(TOTALMAZESIZE[0]-SCREENSIZE[0],TOTALMAZESIZE[1]-SCREENSIZE[1])
+        self.maxoffset = pygame.Vector2(Settings.TOTALMAZESIZE[0]-SCREENSIZE[0],Settings.TOTALMAZESIZE[1]-SCREENSIZE[1])
         self.vel = 300
         self.curvel = pygame.Vector2(0,0)
         self.flipped = False
@@ -97,7 +97,7 @@ class Player:
             self.flipped = True
 
         self.pos += pygame.Vector2(dx,dy)
-        if(self.pos.x < 0 or self.pos.y < 0 or self.pos.x+53 > TOTALMAZESIZE[0] or self.pos.y+53 > TOTALMAZESIZE[1] or map[int(self.pos.y//64)][int(self.pos.x//64)] == 1 or map[int((self.pos.y+53)//64)][int((self.pos.x+53)//64)] == 1 or map[int((self.pos.y+53)//64)][int((self.pos.x)//64)] == 1 or map[int((self.pos.y)//64)][int((self.pos.x+53)//64)] == 1):
+        if(self.pos.x < 0 or self.pos.y < 0 or self.pos.x+53 > Settings.TOTALMAZESIZE[0] or self.pos.y+53 > Settings.TOTALMAZESIZE[1] or map[int(self.pos.y//64)][int(self.pos.x//64)] == 1 or map[int((self.pos.y+53)//64)][int((self.pos.x+53)//64)] == 1 or map[int((self.pos.y+53)//64)][int((self.pos.x)//64)] == 1 or map[int((self.pos.y)//64)][int((self.pos.x+53)//64)] == 1):
             self.pos -= pygame.Vector2(dx,dy)
             dx = 0
             dy = 0

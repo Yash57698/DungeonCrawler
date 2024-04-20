@@ -11,8 +11,8 @@ from Settings import *
 class Game:
     def __init__(self):
         self.screen = pygame.display.set_mode(SCREENSIZE,pygame.SRCALPHA)
-        self.backgroundelements = pygame.Surface(TOTALMAZESIZE)
-        self.foregroundelements = pygame.Surface(TOTALMAZESIZE,pygame.SRCALPHA)
+        self.backgroundelements = pygame.Surface(Settings.TOTALMAZESIZE)
+        self.foregroundelements = pygame.Surface(Settings.TOTALMAZESIZE,pygame.SRCALPHA)
         self.clock = pygame.time.Clock()
         self.running = True
         self.tiles = loadTileMap('./Assets/kenney_tinyDungeon/Tilemap/tilemap_packed.png')
@@ -24,34 +24,34 @@ class Game:
         random.seed(int(time.time()))
         if difficulty == 0:
             #EASY MODE SETTINGS
-            MAZEDIM = (20,20)
-            TOTALMAZESIZE = (MAZEDIM[0]*3*64,MAZEDIM[1]*3*64)
-            GHOSTHP = 1
-            GHOSTDAMAGE = 0.5
-            GRAVESPAWNCHANCE = 1
-            MAXGRAVESPAWNS = 2
-            GRAVESPAWNTIME = 800
+            Settings.MAZEDIM = (20,20)
+            Settings.TOTALMAZESIZE = (Settings.MAZEDIM[0]*3*64,Settings.MAZEDIM[1]*3*64)
+            Settings.GHOSTHP = 1
+            Settings.GHOSTDAMAGE = 0.5
+            Settings.GRAVESPAWNCHANCE = 1
+            Settings.MAXGRAVESPAWNS = 2
+            Settings.GRAVESPAWNTIME = 800
         elif difficulty == 1:
             #MEDIUM MODE SETTINGS
-            MAZEDIM = (30,30)
-            TOTALMAZESIZE = (MAZEDIM[0]*3*64,MAZEDIM[1]*3*64)
-            GHOSTHP = 2
-            GHOSTDAMAGE = 1
-            GRAVESPAWNCHANCE = 2
-            MAXGRAVESPAWNS = 4
-            GRAVESPAWNTIME = 600
+            Settings.MAZEDIM = (30,30)
+            Settings.TOTALMAZESIZE = (Settings.MAZEDIM[0]*3*64,Settings.MAZEDIM[1]*3*64)
+            Settings.GHOSTHP = 2
+            Settings.GHOSTDAMAGE = 1
+            Settings.GRAVESPAWNCHANCE = 2
+            Settings.MAXGRAVESPAWNS = 4
+            Settings.GRAVESPAWNTIME = 600
         elif difficulty == 2:
             #HARD MODE SETTINGS
-            MAZEDIM = (40,40)
-            TOTALMAZESIZE = (MAZEDIM[0]*3*64,MAZEDIM[1]*3*64)
-            GHOSTHP = 4
-            GHOSTDAMAGE = 3
-            GRAVESPAWNCHANCE = 3
-            MAXGRAVESPAWNS = 6
-            GRAVESPAWNTIME = 400
-        SEED = (random.randint(0,1000000))
+            Settings.MAZEDIM = (40,40)
+            Settings.TOTALMAZESIZE = (Settings.MAZEDIM[0]*3*64,Settings.MAZEDIM[1]*3*64)
+            Settings.GHOSTHP = 4
+            Settings.GHOSTDAMAGE = 3
+            Settings.GRAVESPAWNCHANCE = 3
+            Settings.MAXGRAVESPAWNS = 6
+            Settings.GRAVESPAWNTIME = 400
+        Settings.SEED = (random.randint(0,1000000))
 
-        self.map = generateMaze(MAZEDIM[0],MAZEDIM[1])
+        self.map = generateMaze(Settings.MAZEDIM[0],Settings.MAZEDIM[1])
         self.map = scalemapup(self.map)
         self.running = True
 
@@ -59,9 +59,7 @@ class Game:
         self.p = Player(self.tiles[96],self.tiles[97],(128,128),self.tiles)
         self.enemies = []
         self.enemies = spawngraves(self.map,self.tiles,self.p)
-        # self.enemies.append(EvilWizard(self.tiles[111],(128,172),self.tiles,self.p,self.map))
-        # wiz = self.enemies[-1]
-        
+        print(self.p.maxoffset)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -88,7 +86,7 @@ class Game:
                 en.move(dt)
 
             DrawHealthBar(self.screen,self.p.hp/100)
-            DisplayScore(self.screen,self.clock.get_fps())
+            DisplayScore(self.screen,self.p.pos//64)
             pygame.display.flip()
             if self.p.attack != 0:
                 removeindex = []
@@ -123,7 +121,11 @@ class Game:
                 if pygame.Rect.colliderect(self.p.hitbox,en.hitbox):
                     if en.enemytype == "GHOST":
                         if not en.tinted:
-                            self.p.hp -= GHOSTDAMAGE
+                            self.p.hp -= Settings.GHOSTDAMAGE
+                    if en.enemytype == "FIREBALL":
+                        if en.damaged == False:
+                            en.damaged = True
+                            self.p.hp -= Settings.FIREBALLDAMAGE
 
             if self.p.hp <= 0:
                 self.RunLevelFailed(1)
@@ -298,37 +300,46 @@ class Game:
             timetaken = Smolfont.render(f'Time Taken : {time}',False,(54, 65, 83))
             timetakenact = Smolfont.render(f'Time Taken : {time}',False,(255,255,255))
 
+            scoredisp = Smolfont.render(f'Score : {score}',False,(54, 65, 83))
+            scoredispact = Smolfont.render(f'Score : {score}',False,(255,255,255))
+
             Leaderboard = Smolfont.render('Leaderboard',False,(54, 65, 83))
             Leaderboardact = Smolfont.render('Leaderboard',False,color[0])
             MainMenu = Smolfont.render('Main Menu',False,(54, 65, 83))
             MainMenuact = Smolfont.render('Main Menu',False,color[1])
 
-            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)-4, 100-4))
-            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)-4, 100+4))
-            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)+4, 100-4))
-            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)+4, 100+4))
-            self.screen.blit(Headingact, (SCREENSIZE[0]/2 - (Headingact.get_rect().size[0]/2), 100))
+            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)-4, 50-4))
+            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)-4, 50+4))
+            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)+4, 50-4))
+            self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)+4, 50+4))
+            self.screen.blit(Headingact, (SCREENSIZE[0]/2 - (Headingact.get_rect().size[0]/2), 50))
 
 
-            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)-4, 300-4))
-            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)-4, 300+4))
-            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)+4, 300-4))
-            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)+4, 300+4))
-            self.screen.blit(timetakenact, (SCREENSIZE[0]/2 - (timetakenact.get_rect().size[0]/2), 300))
+            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)-4, 200-4))
+            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)-4, 200+4))
+            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)+4, 200-4))
+            self.screen.blit(timetaken, (SCREENSIZE[0]/2 - (timetaken.get_rect().size[0]/2)+4, 200+4))
+            self.screen.blit(timetakenact, (SCREENSIZE[0]/2 - (timetakenact.get_rect().size[0]/2), 200))
+
+            self.screen.blit(scoredisp, (SCREENSIZE[0]/2 - (scoredisp.get_rect().size[0]/2)-4, 300-4))
+            self.screen.blit(scoredisp, (SCREENSIZE[0]/2 - (scoredisp.get_rect().size[0]/2)-4, 300+4))
+            self.screen.blit(scoredisp, (SCREENSIZE[0]/2 - (scoredisp.get_rect().size[0]/2)+4, 300-4))
+            self.screen.blit(scoredisp, (SCREENSIZE[0]/2 - (scoredisp.get_rect().size[0]/2)+4, 300+4))
+            self.screen.blit(scoredispact, (SCREENSIZE[0]/2 - (scoredispact.get_rect().size[0]/2), 300))
 
 
-            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)-4, 400-4))
-            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)-4, 400+4))
-            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)+4, 400-4))
-            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)+4, 400+4))
-            self.screen.blit(Leaderboardact, (SCREENSIZE[0]/2 - (Leaderboardact.get_rect().size[0]/2), 400))
+            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)-4, 500-4))
+            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)-4, 500+4))
+            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)+4, 500-4))
+            self.screen.blit(Leaderboard, (SCREENSIZE[0]/2 - (Leaderboard.get_rect().size[0]/2)+4, 500+4))
+            self.screen.blit(Leaderboardact, (SCREENSIZE[0]/2 - (Leaderboardact.get_rect().size[0]/2), 500))
 
 
-            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)-4, 500-4))
-            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)-4, 500+4))
-            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)+4, 500-4))
-            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)+4, 500+4))
-            self.screen.blit(MainMenuact, (SCREENSIZE[0]/2 - (MainMenuact.get_rect().size[0]/2), 500))
+            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)-4, 600-4))
+            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)-4, 600+4))
+            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)+4, 600-4))
+            self.screen.blit(MainMenu, (SCREENSIZE[0]/2 - (MainMenu.get_rect().size[0]/2)+4, 600+4))
+            self.screen.blit(MainMenuact, (SCREENSIZE[0]/2 - (MainMenuact.get_rect().size[0]/2), 600))
             pygame.display.flip()
         pygame.quit()
 

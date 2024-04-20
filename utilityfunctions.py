@@ -208,6 +208,6 @@ def spawngraves(map,tiles,player):
                 if map[y][x] == 0 and y>=2 and map[y-1][x] == 0 and map[y-2][x] == 0:
                     random.seed(((len(map))*y)+x+SEED)  
                     ty = random.randint(1,100)
-                    if ty <= GRAVESPAWNCHANCE:
+                    if ty <= Settings.GRAVESPAWNCHANCE:
                         enemies.append(Grave((64*x,64*y),tiles,player))
     return enemies

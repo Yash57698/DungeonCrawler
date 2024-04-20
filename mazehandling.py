@@ -48,6 +48,5 @@ def generateMaze(width,height):
         maze[i] = maze[i] + [1]
     maze[-2][-1] = 0
 
-    
     return maze
 
