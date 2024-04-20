@@ -7,6 +7,7 @@ import math
 class Player:
     
     def __init__(self,image,image2,pos,tiles):
+        self.score = 0
         self.hp = 100
         self.pos = pos
         self.tiles = tiles
@@ -27,6 +28,7 @@ class Player:
         self.attacktime = 0
         self.weaponrect = 0
         self.hitbox =0
+        
     #Renders the player on a screen object and also handles animations
     def render(self,screen):
 
@@ -79,13 +81,13 @@ class Player:
             return
 
         dx,dy = 0,0
-        if keys[pygame.K_w]:
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
             dy = - self.vel* dt
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             dy = self.vel * dt
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             dx = -self.vel * dt
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             dx = self.vel * dt
 
 
