@@ -1,6 +1,8 @@
 import pygame
 import random
 from Settings import *
+from EvilWizard import EvilWizard
+from Chests import Chest
 from Graves import Grave
 import csv
 
@@ -123,14 +125,14 @@ def renderMap(map,screen,tiles,offset):
                     elif y!=0 and map[y-1][x] == 0 and x!=0 and map[y][x-1] == 0 and map[y-1][x-1] == 1:
                         screen.blit(tiles[53],(64*x,64*y))
                     elif x!=0 and map[y][x-1] == 1:
-                        random.seed(((len(map))*y)+x+SEED)
+                        random.seed(((len(map))*y)+x+Settings.SEED)
                         ty = random.randint(0,9)
                         tile = 50
                         if ty<2:
                             tile = 51
                         screen.blit(pygame.transform.rotate(tiles[tile],90),(64*x,64*y))
                     elif y!=0 and map[y-1][x] == 1:
-                        random.seed(((len(map))*y)+x+SEED)
+                        random.seed(((len(map))*y)+x+Settings.SEED)
                         ty = random.randint(0,9)
                         tile = 50
                         if ty<2:
@@ -142,7 +144,7 @@ def renderMap(map,screen,tiles,offset):
                             screen.blit(pygame.transform.rotate(tiles[18],0),(64*x,64*(y-1)))
                             screen.blit(pygame.transform.rotate(tiles[6],0),(64*x,64*(y-2)))
                     else:
-                        random.seed(((len(map))*y)+x+SEED)
+                        random.seed(((len(map))*y)+x+Settings.SEED)
                         ty = random.randint(0,99)
                         if ty>89:
                             screen.blit(tiles[49],(64*x,64*y))
@@ -167,7 +169,7 @@ def renderMap(map,screen,tiles,offset):
                     elif y!=(len(map)-1) and map[y+1][x] == 0 and x!=(len(map[0])-1) and map[y][x+1] == 0:
                         screen.blit(tiles[59],(64*x,64*y))#bottom right wall
                     elif y!=(len(map)-1) and map[y+1][x] == 0:
-                        random.seed(((len(map))*y)+x+SEED)
+                        random.seed(((len(map))*y)+x+Settings.SEED)
                         ty = random.randint(0,100)
                         if ty<4:
                             screen.blit(tiles[29],(64*x,64*y))#flag wall
@@ -188,7 +190,7 @@ def renderMap(map,screen,tiles,offset):
                     elif x!=0 and y<(len(map)-2) and map[y][x-1] == 1 and map[y+1][x-1] == 1 and map[y+2][x-1] == 0:
                         screen.blit(tiles[3],(64*x,64*y))# turn
                     else :
-                        random.seed(((len(map))*y)+x+SEED)
+                        random.seed(((len(map))*y)+x+Settings.SEED)
                         ty = random.randint(0,100)
                         if ty<5:
                             screen.blit(tiles[12],(64*x,64*y))
@@ -206,8 +208,24 @@ def spawngraves(map,tiles,player):
         for x in range(len(map[0])):
             if not (64*x >= offset[0] - 50 and 64*x<=offset[0]+SCREENSIZE[0]+50 and 64*y >= offset[1]-50 and 64*y <= offset[1] + SCREENSIZE[1]+50):
                 if map[y][x] == 0 and y>=2 and map[y-1][x] == 0 and map[y-2][x] == 0:
-                    random.seed(((len(map))*y)+x+SEED)  
+                    random.seed(((len(map))*y)+x+Settings.SEED)  
                     ty = random.randint(1,100)
                     if ty <= Settings.GRAVESPAWNCHANCE:
                         enemies.append(Grave((64*x,64*y),tiles,player))
     return enemies
+
+def spawnchests(map,tiles,player,enemies):
+    interactables = []
+    offset = (0,0)
+    for y in range(len(map)):
+        for x in range(len(map[0])):
+            if not (64*x >= offset[0] - 50 and 64*x<=offset[0]+SCREENSIZE[0]+50 and 64*y >= offset[1]-50 and 64*y <= offset[1] + SCREENSIZE[1]+50):
+                if map[y][x] == 0 and y>=2 and map[y-1][x] == 1 and x!=0 and map[y-1][x-1] == 1 and x!=(len(map[0])-1) and map[y-1][x+1] == 1:
+                    random.seed(((len(map))*y)+x+Settings.SEED)  
+                    ty = random.randint(1,100)
+                    if ty <= Settings.CHESTSPAWNCHANCE:
+                        interactables.append(Chest((64*x,64*y),tiles,player))
+                        k = random.randint(1,100)
+                        if k<= Settings.WIZARDSPAWNCHANCE:
+                            enemies.append(EvilWizard(tiles[111],(64*x,64*y),tiles,player,map))
+    return interactables

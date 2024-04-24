@@ -9,11 +9,11 @@ class Fireball:
     def __init__(self,image,pos,tiles,player):
         self.enemytype = "FIREBALL"
         self.tiles = tiles
-        self.velocity = 400
+        self.velocity = Settings.FIREBALLSPEED
         self.pos = pygame.Vector2(pos[0],pos[1])
         self.image = image
         self.player = player
-        self.hitbox = 0
+        self.hitbox = pygame.Rect((-1,-1),(1,1))
         self.size = 0.025
         self.damaged = False
         self.dirn = pygame.Vector2(self.player.pos[0]-self.pos[0],self.player.pos[1]-self.pos[1])
@@ -29,7 +29,7 @@ class Fireball:
         re = pygame.Rect((self.pos[0],self.pos[1]),(100,64))
         self.hitbox = re
         if self.size <=1.0:
-            self.size += 0.025
+            self.size += 0.020
 
 
     #moves the fireball towards the player

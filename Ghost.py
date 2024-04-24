@@ -17,7 +17,7 @@ class Ghost:
         self.player = player
         self.animtime =0 
         self.curvel = pygame.Vector2(0,0)
-        self.hitbox = 0
+        self.hitbox = pygame.Rect((-1,-1),(1,1))
         self.disabled = False
         self.tinted = False
 
@@ -26,21 +26,22 @@ class Ghost:
 
     #Renders the ghost on a screen object and also handles animations
     def render(self,screen,offset,enemies):
-        self.animtime+=1
-        self.animtime %= 1000
-        if(self.animtime%75 == 0):
-            self.tinted = False
-        yoff = self.animtime%30
-        if(yoff>=15):
-            yoff = 30-yoff
-        gh = pygame.Surface((64,64),pygame.SRCALPHA)
-        gh.blit(self.image,(0,0))
-        if self.tinted:
-            GB = min(255, max(0, round(255 * (0.8))))
-            gh.fill((255, GB, GB), special_flags = pygame.BLEND_MULT)
-        screen.blit(gh,(self.pos[0],self.pos[1]+yoff))
-        re = pygame.Rect((self.pos[0],self.pos[1]+yoff),(64,64))
-        self.hitbox = re
+        if (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
+            self.animtime+=1
+            self.animtime %= 1000
+            if(self.animtime%75 == 0):
+                self.tinted = False
+            yoff = self.animtime%30
+            if(yoff>=15):
+                yoff = 30-yoff
+            gh = pygame.Surface((64,64),pygame.SRCALPHA)
+            gh.blit(self.image,(0,0))
+            if self.tinted:
+                GB = min(255, max(0, round(255 * (0.8))))
+                gh.fill((255, GB, GB), special_flags = pygame.BLEND_MULT)
+            screen.blit(gh,(self.pos[0],self.pos[1]+yoff))
+            re = pygame.Rect((self.pos[0],self.pos[1]+yoff),(64,64))
+            self.hitbox = re
 
 
     #moves the Ghost towards the player

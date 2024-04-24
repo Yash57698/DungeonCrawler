@@ -1,18 +1,18 @@
 {
-    "activeFile": "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx",
+    "activeFile": "Assets/kenney_tinyDungeon/Tiled/sampleMap.tmx",
     "expandedProjectPaths": [
-        "Assets",
-        "Assets/kenney_tinyDungeon",
         ".",
-        "Assets/kenney_tinyDungeon/Tiled"
+        "Assets/kenney_tinyDungeon/Tiled",
+        "Assets/kenney_tinyDungeon",
+        "Assets"
     ],
     "fileStates": {
         "Assets/kenney_tinyDungeon/Tiled/sampleMap.tmx": {
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 298,
-                "y": 133.33333333333334
+                "x": 192.66666666666663,
+                "y": 183.33333333333331
             }
         },
         "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx": {
@@ -26,7 +26,7 @@
     ],
     "project": "tiled.tiled-project",
     "recentFiles": [
-        "Assets/kenney_tinyDungeon/Tiled/sampleMap.tmx",
-        "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx"
+        "Assets/kenney_tinyDungeon/Tiled/sampleSheet.tsx",
+        "Assets/kenney_tinyDungeon/Tiled/sampleMap.tmx"
     ]
 }

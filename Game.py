@@ -5,6 +5,7 @@ from utilityfunctions import *
 from Player import Player
 from Ghost import Ghost
 from EvilWizard import EvilWizard
+from Chests import Chest
 from mazehandling import generateMaze
 from Settings import *
 
@@ -30,7 +31,10 @@ class Game:
             Settings.GHOSTDAMAGE = 0.5
             Settings.GRAVESPAWNCHANCE = 1
             Settings.MAXGRAVESPAWNS = 2
+            Settings.WIZARDSPAWNCHANCE = 40
             Settings.GRAVESPAWNTIME = 800
+            Settings.FIREBALLSPEED = 400
+            Settings.SWORDDROPRATE = 10
         elif difficulty == 1:
             #MEDIUM MODE SETTINGS
             Settings.MAZEDIM = (30,30)
@@ -39,16 +43,22 @@ class Game:
             Settings.GHOSTDAMAGE = 1
             Settings.GRAVESPAWNCHANCE = 2
             Settings.MAXGRAVESPAWNS = 4
+            Settings.WIZARDSPAWNCHANCE = 70
             Settings.GRAVESPAWNTIME = 600
+            Settings.FIREBALLSPEED = 500
+            Settings.SWORDDROPRATE = 10
         elif difficulty == 2:
             #HARD MODE SETTINGS
-            Settings.MAZEDIM = (40,40)
+            Settings.MAZEDIM = (30,30)
             Settings.TOTALMAZESIZE = (Settings.MAZEDIM[0]*3*64,Settings.MAZEDIM[1]*3*64)
             Settings.GHOSTHP = 4
             Settings.GHOSTDAMAGE = 3
-            Settings.GRAVESPAWNCHANCE = 3
+            Settings.GRAVESPAWNCHANCE = 2
+            Settings.WIZARDSPAWNCHANCE = 70
             Settings.MAXGRAVESPAWNS = 6
             Settings.GRAVESPAWNTIME = 400
+            Settings.FIREBALLSPEED = 600
+            Settings.SWORDDROPRATE = 10
         Settings.SEED = (random.randint(0,1000000))
 
         self.map = generateMaze(Settings.MAZEDIM[0],Settings.MAZEDIM[1])
@@ -56,9 +66,13 @@ class Game:
         self.running = True
 
 
-        self.p = Player(self.tiles[96],self.tiles[97],(128,128),self.tiles)
+        self.p = Player(self.tiles[96],self.tiles[97],(64,64),self.tiles)
         self.enemies = []
+        self.interactables = []
+        # self.interactables.append(Chest((128,128),self.tiles,self.p))
         self.enemies = spawngraves(self.map,self.tiles,self.p)
+        self.interactables = spawnchests(self.map,self.tiles,self.p,self.enemies)
+
         print(self.p.maxoffset)
         while self.running:
             for event in pygame.event.get():
@@ -73,9 +87,12 @@ class Game:
             # print("yash")
             renderMap(self.map,self.backgroundelements,self.tiles,self.p.offset)
             self.foregroundelements.fill((0,0,0,0))
-            self.p.render(self.foregroundelements)
+            
+            for i in self.interactables:
+                i.render(self.foregroundelements,self.p.offset,self.interactables)
             for en in self.enemies:
                 en.render(self.foregroundelements,self.p.offset,self.enemies)
+            self.p.render(self.foregroundelements)
             self.screen.blit(self.backgroundelements,-self.p.offset)
             self.screen.blit(self.foregroundelements,-self.p.offset)
             if self.map[int(self.p.pos[1]//64)][int(self.p.pos[0]//64)] == 2:
@@ -86,7 +103,7 @@ class Game:
                 en.move(dt)
 
             DrawHealthBar(self.screen,self.p.hp/100)
-            DisplayScore(self.screen,self.p.pos//64)
+            DisplayScore(self.screen,self.clock.get_fps())
             pygame.display.flip()
             if self.p.attack != 0:
                 removeindex = []
@@ -98,23 +115,38 @@ class Game:
                             removeindex.append(i)
                         if en.enemytype == "GHOST":
                             if not en.tinted:
-                                en.hp-=1
+                                en.hp-=self.p.dmg
                                 en.tinted = True
                                 en.knockback(dt)
-                                if en.hp == 0:
+                                if en.hp <= 0:
                                     self.p.score += en.score
                                     removeindex.append(i)
                         if en.enemytype == "WIZARD":
                             if not en.tinted:
-                                en.hp-=1
+                                en.hp-=self.p.dmg
                                 en.tinted = True
                                 en.knockback(dt)
-                                if en.hp == 0:
+                                if en.hp <= 0:
                                     self.p.score += en.score
                                     removeindex.append(i)
                 removeindex.sort(reverse=True)
                 for k in removeindex:
                     self.enemies.pop(k)
+
+                removeindex = []
+                for i in range(len(self.interactables)):
+                    obj = self.interactables[i]
+                    if obj.type == "CHEST" and pygame.Rect.colliderect(self.p.weaponrect,obj.hitbox):
+                        obj.opened = True
+            removeindex = []
+            for i in range(len(self.interactables)):
+                obj = self.interactables[i]
+                if obj.type in ["POTION","SWORD"]  and obj.size>=0.95 and pygame.Rect.colliderect(self.p.hitbox,obj.hitbox):
+                    obj.effect()
+                    removeindex.append(i)
+            removeindex.sort(reverse=True)
+            for k in removeindex:
+                self.interactables.pop(k)
             
             for i in range(len(self.enemies)):
                 en = self.enemies[i]

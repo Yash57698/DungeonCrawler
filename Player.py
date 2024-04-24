@@ -15,7 +15,7 @@ class Player:
         self.image = image
         self.image2 = image2
         self.bounds = (200,100)
-        self.pos = pygame.Vector2(0,0)
+        self.pos = pygame.Vector2(pos[0],pos[1])
         self.offset= pygame.Vector2(0,0)
         self.minoffset = pygame.Vector2(0,0)
         self.maxoffset = pygame.Vector2(Settings.TOTALMAZESIZE[0]-SCREENSIZE[0],Settings.TOTALMAZESIZE[1]-SCREENSIZE[1])
@@ -28,6 +28,7 @@ class Player:
         self.attacktime = 0
         self.weaponrect = 0
         self.hitbox =0
+        self.dmg = 1
         
     #Renders the player on a screen object and also handles animations
     def render(self,screen):
