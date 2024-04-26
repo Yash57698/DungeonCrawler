@@ -1,7 +1,6 @@
 import pygame
 from Settings import *
 from Collectables import *
-import math
 
 
 #implements the Chest Class
@@ -16,8 +15,14 @@ class Chest:
         self.hitbox = pygame.Rect((-1,-1),(1,1))
         self.opened = False
 
-    #Renders the Chest on a screen object and also handles animations
     def render(self,screen,offset,interactables):
+        """
+        Renders the Chest on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to.
+            offset: the offset to check whether to render the object
+            interactables: the list of interactable items in the game
+        """
         if (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
             if self.animtime <20 and self.opened:
                 self.animtime += 1

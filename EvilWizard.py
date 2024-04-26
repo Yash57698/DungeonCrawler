@@ -30,17 +30,20 @@ class EvilWizard:
         self.target = (-1,-1)
         self.fireballimage = pygame.transform.scale_by(pygame.image.load("./Assets/fire.png"),0.15)
 
-    def disable(self):
-        self.disabled = True
-
-    #Renders the Wizard on a screen object and also handles animations
     def render(self,screen,offset,enemies):
-            # print(self.pos)
-        if (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
+        """
+        Renders the wizard on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to.
+            offset: the offset to check whether to render the object
+            enemies: the list of enemies in the game
+        """
+        if (self.seenplayer) or (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
             self.animtime+=1
             self.animtime %= 1000
             if self.attack != 0:
                 self.attacktime +=self.attack
+                
             if self.attacktime <= 0:
                 self.animtime = 0
                 self.attack = 0
@@ -95,11 +98,14 @@ class EvilWizard:
 
 
     def pathfind(self):
+        """
+            finds a path to the player from the wizard
+        """
         offset = self.player.offset
         stk = []
         t = time.time()
         # print(self.map[int((self.pos[1]+32)//64)][int((self.pos[0]+32)//64)] , self.map[int((self.player.pos[1]+32)//64)][int((self.player.pos[0]+32)//64)])
-        if (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
+        if (self.seenplayer) or (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
             if(self.map[int((self.pos[1]+32)//64)][int((self.pos[0]+32)//64)] != 0 or self.map[int((self.player.pos[1]+32)//64)][int((self.player.pos[0]+32)//64)] != 0):
                 return
             stk.append((int((self.pos[1]+32)//64),int((self.pos[0]+32)//64)))
@@ -146,6 +152,12 @@ class EvilWizard:
 
     #moves the Wizard towards the player
     def move(self,dt):
+        """
+        handles the movement of the ghost enemy
+        moves the Wizard towards the player
+        Args:
+            dt: the time passed between this frame and the last
+        """
         if (self.map[int((self.pos[1]+32)//64)][int((self.pos[0]+32)//64)] == 0 or self.map[int((self.player.pos[1]+32)//64)][int((self.player.pos[0]+32)//64)]== 0) :
             self.pathfind()
             
@@ -171,6 +183,11 @@ class EvilWizard:
         
 
     def knockback(self,dt):
+        """
+        Handles the knockback after getting hit by the player
+        Args:
+            dt:the time passed between this frame and the last
+        """
         self.tinted = True
         # dirn = -pygame.Vector2(self.player.pos[0]-self.pos[0]/abs(self.player.pos[0]-self.pos[0]),0)
         if self.player.pos[0] > self.pos[0]:

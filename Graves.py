@@ -17,8 +17,14 @@ class Grave:
         self.hitbox = pygame.Rect((-1,-1),(1,1))
         self.spawned = 0
 
-    #Renders the grave on a screen object and also handles animations
     def render(self,screen,offset,enemies):
+        """
+        Renders the Grave on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to.
+            offset: the offset to check whether to render the object
+            enemies: the list of enemies in the game
+        """
         if (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
             if ((self.animtime == 0 or self.spawned == 0) and self.spawned<Settings.MAXGRAVESPAWNS) and self.pos.x >= offset[0] and self.pos.x<=offset[0]+SCREENSIZE[0] and self.pos.y >= offset[1] and self.pos.y <= offset[1] + SCREENSIZE[1]:
                 enemies.append(Ghost(self.tiles[121],(self.pos.x,self.pos.y),self.tiles,self.player))

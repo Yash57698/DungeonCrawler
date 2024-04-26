@@ -13,8 +13,14 @@ class Potion:
         self.hitbox = pygame.Rect((-1,-1),(1,1))
         self.size = 0.025
 
-    #Renders the Potion on a screen object and also handles animations
     def render(self,screen,offset,enemies):
+        """
+        Renders the Potion on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to.
+            offset: the offset to check whether to render the object
+            enemies: the list of enemies in the game
+        """
         self.size = min(1.0,self.size)
         fb = pygame.Surface((100,100),pygame.SRCALPHA)
         fb.blit(pygame.transform.scale_by(self.tiles[115],self.size),(0,0))
@@ -25,7 +31,10 @@ class Potion:
             self.size += 0.050
 
     def effect(self):
-        self.player.hp += 10
+        """
+        handles the effect given to the player on consuming the Potion
+        """
+        self.player.hp += 30
         self.player.hp = min(self.player.hp,100)
         self.player.score += Settings.POTIONSCORE
 
@@ -40,8 +49,14 @@ class Sword:
         self.hitbox = 0
         self.size = 0.025
 
-    #Renders the Sword on a screen object and also handles animations
     def render(self,screen,offset,enemies):
+        """
+        Renders the Sword on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to.
+            offset: the offset to check whether to render the object
+            enemies: the list of enemies in the game
+        """
         self.size = min(1.0,self.size)
         fb = pygame.Surface((100,100),pygame.SRCALPHA)
         fb.blit(pygame.transform.scale_by(self.tiles[GOLDSWORD],self.size),(0,0))
@@ -52,6 +67,9 @@ class Sword:
             self.size += 0.050
 
     def effect(self):
+        """
+        handles the effect given to the player on getting the sword
+        """
         self.player.weaponid = GOLDSWORD
         self.player.dmg += 2
         self.player.score += Settings.SWORDSCORE

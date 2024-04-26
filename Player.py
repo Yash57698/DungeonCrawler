@@ -30,9 +30,12 @@ class Player:
         self.hitbox =0
         self.dmg = 1
         
-    #Renders the player on a screen object and also handles animations
     def render(self,screen):
-
+        """
+        Renders the Screen on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to
+        """
         if self.attack != 0:
             self.attacktime +=self.attack
         if self.attacktime == 0:
@@ -74,8 +77,13 @@ class Player:
         self.weaponrect = re
         self.hitbox = pygame.Rect((self.pos[0],self.pos[1]+yoff),(64,64))
         
-    #moves the player according to WASD control and handles the screenscroll effect
     def move(self,dt,map):
+        """
+        moves the player according to WASD control and handles the screenscroll effect and collisions
+        Args:
+            dt: the time between this frame and the last
+            map: the map to check for collisions 
+        """
         keys = pygame.key.get_pressed()
         
         if self.attack !=0:

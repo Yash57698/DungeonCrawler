@@ -1,7 +1,12 @@
 import random
 
-#Implements an iterative version of Recursive Backtracking for maze generation 
 def recursivebacktrack(maze,start):
+    """
+        Implements an iterative version of Recursive Backtracking for maze generation
+        Args: 
+            maze: the 2d array to complete as maze
+            start:The start node from where to start the maze generatoin from
+    """
     stk = []
     maze[start[0]][start[1]] = 2
     stk.append(start)
@@ -25,8 +30,13 @@ def recursivebacktrack(maze,start):
             stk.append((x,y))
             stk.append((choices[0][1],choices[0][0]))
         
-#creates an empty maze and populates it using recursivebacktracking
 def generateMaze(width,height):
+    """
+    creates an empty maze and populates it using recursivebacktracking
+    Args:
+        width: the width of the maze to generate
+        height: the height of the maze to generate
+    """
     maze = []
     width = width -1
     for i in range(height):
@@ -47,6 +57,6 @@ def generateMaze(width,height):
     for i in range(height):
         maze[i] = maze[i] + [1]
     maze[-2][-1] = 0
-
+    
     return maze
 

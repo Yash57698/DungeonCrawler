@@ -11,6 +11,9 @@ from Settings import *
 
 class Game:
     def __init__(self):
+        """
+        Initializes the Game object with screen
+        """
         self.screen = pygame.display.set_mode(SCREENSIZE,pygame.SRCALPHA)
         self.backgroundelements = pygame.Surface(Settings.TOTALMAZESIZE)
         self.foregroundelements = pygame.Surface(Settings.TOTALMAZESIZE,pygame.SRCALPHA)
@@ -19,7 +22,9 @@ class Game:
         self.tiles = loadTileMap('./Assets/kenney_tinyDungeon/Tilemap/tilemap_packed.png')
 
     def RunGame(self,difficulty):
-        
+        """
+        selects the Settings for the game and then generates a new maze and starts the game
+        """
         pygame.init()
         pygame.font.init()
         random.seed(int(time.time()))
@@ -42,23 +47,24 @@ class Game:
             Settings.GHOSTHP = 2
             Settings.GHOSTDAMAGE = 1
             Settings.GRAVESPAWNCHANCE = 2
-            Settings.MAXGRAVESPAWNS = 4
+            Settings.MAXGRAVESPAWNS = 3
             Settings.WIZARDSPAWNCHANCE = 70
             Settings.GRAVESPAWNTIME = 600
             Settings.FIREBALLSPEED = 500
-            Settings.SWORDDROPRATE = 10
+            Settings.SWORDDROPRATE = 20
         elif difficulty == 2:
             #HARD MODE SETTINGS
             Settings.MAZEDIM = (30,30)
             Settings.TOTALMAZESIZE = (Settings.MAZEDIM[0]*3*64,Settings.MAZEDIM[1]*3*64)
             Settings.GHOSTHP = 4
             Settings.GHOSTDAMAGE = 3
-            Settings.GRAVESPAWNCHANCE = 2
+        
+            Settings.GRAVESPAWNCHANCE = 1
             Settings.WIZARDSPAWNCHANCE = 70
-            Settings.MAXGRAVESPAWNS = 6
-            Settings.GRAVESPAWNTIME = 400
+            Settings.MAXGRAVESPAWNS = 5
+            Settings.GRAVESPAWNTIME = 600
             Settings.FIREBALLSPEED = 600
-            Settings.SWORDDROPRATE = 10
+            Settings.SWORDDROPRATE = 30
         Settings.SEED = (random.randint(0,1000000))
 
         self.map = generateMaze(Settings.MAZEDIM[0],Settings.MAZEDIM[1])
@@ -72,8 +78,8 @@ class Game:
         # self.interactables.append(Chest((128,128),self.tiles,self.p))
         self.enemies = spawngraves(self.map,self.tiles,self.p)
         self.interactables = spawnchests(self.map,self.tiles,self.p,self.enemies)
-
-        print(self.p.maxoffset)
+        self.paused = False
+        Smolfont = pygame.font.Font('./Assets/ThaleahFat.ttf',60)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -82,9 +88,10 @@ class Game:
                     if event.key == pygame.K_SPACE:
                         if(self.p.attack == 0):
                             self.p.attack = 10
+                    if event.key == pygame.K_ESCAPE:
+                        self.paused = True
             dt = self.clock.tick(60) / 1000
 
-            # print("yash")
             renderMap(self.map,self.backgroundelements,self.tiles,self.p.offset)
             self.foregroundelements.fill((0,0,0,0))
             
@@ -102,9 +109,68 @@ class Game:
             for en in self.enemies:
                 en.move(dt)
 
+            t = 0
+            selected = 0
+            while self.paused:
+                t+=1
+                t%=150
+                dt = self.clock.tick(60) / 1000
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                        self.paused = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            self.paused = False
+                        if event.key in [pygame.K_s, pygame.K_DOWN]:
+                            selected+=1
+                            selected %= 2
+                        if event.key in [pygame.K_w,pygame.K_UP]:
+                            selected+=3
+                            selected%=2
+                        if event.key == pygame.K_RETURN:
+                            if selected == 0:
+                                self.paused = False 
+                            elif selected == 1:
+                                self.RunMainMenu()
+                                return
+                        if event.key == pygame.K_p:
+                            pygame.image.save(self.tiles[107],"gold.jpg")
+                color = [(255,255,255),(255, 255, 255),(255, 255, 255)]
+                if t<75:
+                    color[selected] = (255,226,98)
+
+                self.screen.blit(self.backgroundelements,-self.p.offset)
+                self.screen.blit(self.foregroundelements,-self.p.offset)
+
+                Resume = Smolfont.render('Resume',False,(54, 65, 83))
+                Resumeact = Smolfont.render('Resume',False,color[0])
+
+                QuitGame = Smolfont.render('Main Menu',False,(54, 65, 83))
+                QuitGameact = Smolfont.render('Main Menu',False,color[1])
+
+                self.screen.blit(Resume, (SCREENSIZE[0]/2 - (Resume.get_rect().size[0]/2)-4, 300-4))
+                self.screen.blit(Resume, (SCREENSIZE[0]/2 - (Resume.get_rect().size[0]/2)-4, 300+4))
+                self.screen.blit(Resume, (SCREENSIZE[0]/2 - (Resume.get_rect().size[0]/2)+4, 300-4))
+                self.screen.blit(Resume, (SCREENSIZE[0]/2 - (Resume.get_rect().size[0]/2)+4, 300+4))
+                self.screen.blit(Resumeact, (SCREENSIZE[0]/2 - (Resumeact.get_rect().size[0]/2), 300))
+
+                self.screen.blit(QuitGame, (SCREENSIZE[0]/2 - (QuitGame.get_rect().size[0]/2)-4, 500-4))
+                self.screen.blit(QuitGame, (SCREENSIZE[0]/2 - (QuitGame.get_rect().size[0]/2)-4, 500+4))
+                self.screen.blit(QuitGame, (SCREENSIZE[0]/2 - (QuitGame.get_rect().size[0]/2)+4, 500-4))
+                self.screen.blit(QuitGame, (SCREENSIZE[0]/2 - (QuitGame.get_rect().size[0]/2)+4, 500+4))
+                self.screen.blit(QuitGameact, (SCREENSIZE[0]/2 - (QuitGameact.get_rect().size[0]/2), 500))
+                pygame.display.flip()    
+
+
             DrawHealthBar(self.screen,self.p.hp/100)
-            DisplayScore(self.screen,self.clock.get_fps())
+            DisplayScore(self.screen,self.p.score)
+            
+            
             pygame.display.flip()
+
+
+
             if self.p.attack != 0:
                 removeindex = []
                 for i in range(len(self.enemies)):
@@ -164,6 +230,9 @@ class Game:
         pygame.quit()
 
     def RunMainMenu(self):
+        """
+        Runs the Main menu GUI
+        """
         pygame.init()
         pygame.font.init()
         self.running = True
@@ -245,6 +314,14 @@ class Game:
         exit()
     
     def RunLevelCompleted(self,levelid,time,score):
+        """
+        Runs the level completed GUI
+        
+        Args:
+            levelid : takes the difficulty the level was completed at
+            time : the time taken to complete the level
+            score : the score with which the level was completed
+        """
         pygame.init()
         pygame.font.init()
         self.running = True
@@ -376,6 +453,11 @@ class Game:
         pygame.quit()
 
     def RunLevelFailed(self,levelid):
+        """
+            Runs the level Failed GUI
+            Args:
+                levelid : takes the difficulty the level was running at
+        """
         pygame.init()
         pygame.font.init()
         self.running = True
@@ -430,6 +512,9 @@ class Game:
         pygame.quit()
 
     def RunLeaderboard(self):
+        """
+        Runs the leaderboard GUI
+        """
         pygame.init()
         pygame.font.init()
         self.running = True
@@ -499,6 +584,9 @@ class Game:
         pygame.quit()
     
     def RunLevelSelect(self):
+        """
+        Runs the Level Select GUI
+        """
         pygame.init()
         pygame.font.init()
         self.running = True
@@ -535,13 +623,13 @@ class Game:
             Heading = Largefont.render('Select Difficulty',True, (54, 65, 83))
             Headingact = Largefont.render('Select Difficulty',True, (255, 255, 255))
 
-            NewGame = Smolfont.render('Easy',False,(54, 65, 83))
-            NewGameact = Smolfont.render('Easy',False,color[0])
+            NewGame = Smolfont.render('Normal',False,(54, 65, 83))
+            NewGameact = Smolfont.render('Normal',False,color[0])
 
-            Leaderboard = Smolfont.render('Medium',False,(54, 65, 83))
-            Leaderboardact = Smolfont.render('Medium',False,color[1])
-            QuitGame = Smolfont.render('Hard',False,(54, 65, 83))
-            QuitGameact = Smolfont.render('Hard',False,color[2])
+            Leaderboard = Smolfont.render('Hard',False,(54, 65, 83))
+            Leaderboardact = Smolfont.render('Hard',False,color[1])
+            QuitGame = Smolfont.render('Insane',False,(54, 65, 83))
+            QuitGameact = Smolfont.render('Insane',False,color[2])
 
             self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)-4, 100-4))
             self.screen.blit(Heading, (SCREENSIZE[0]/2 - (Heading.get_rect().size[0]/2)-4, 100+4))

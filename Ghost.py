@@ -7,6 +7,9 @@ import math
 class Ghost:
 
     def __init__(self,image,pos,tiles,player):
+        """
+            initilizes the ghost object
+        """
         self.score = Settings.GHOSTSCORE
         self.enemytype = "GHOST"
         self.hp = Settings.GHOSTHP
@@ -21,11 +24,14 @@ class Ghost:
         self.disabled = False
         self.tinted = False
 
-    def disable(self):
-        self.disabled = True
-
-    #Renders the ghost on a screen object and also handles animations
     def render(self,screen,offset,enemies):
+        """
+        Renders the ghost on a screen object and also handles animations
+        Args:
+            screen: the pygame screen object to render the object to.
+            offset: the offset to check whether to render the object
+            enemies: the list of enemies in the game
+        """
         if (self.pos[0] >= offset[0] - 50 and self.pos[0]<=offset[0]+SCREENSIZE[0]+50 and self.pos[1] >= offset[1]-128 and self.pos[1] <= offset[1] + SCREENSIZE[1]+128):
             self.animtime+=1
             self.animtime %= 1000
@@ -43,9 +49,13 @@ class Ghost:
             re = pygame.Rect((self.pos[0],self.pos[1]+yoff),(64,64))
             self.hitbox = re
 
-
-    #moves the Ghost towards the player
     def move(self,dt):
+        """
+        handles the movement of the ghost enemy
+        moves the Ghost towards the player
+        Args:
+            dt: the time passed between this frame and the last
+        """
         dirn = pygame.Vector2(self.player.pos[0]-self.pos[0],self.player.pos[1]-self.pos[1])
         
         dist = pygame.Vector2.magnitude(dirn)
@@ -69,6 +79,11 @@ class Ghost:
         self.curvel = dirn
 
     def knockback(self,dt):
+        """
+        Handles the knockback after getting hit by the player
+        Args:
+            dt:the time passed between this frame and the last
+        """
         self.tinted = True
         # dirn = -pygame.Vector2(self.player.pos[0]-self.pos[0]/abs(self.player.pos[0]-self.pos[0]),0)
         if self.player.pos[0] > self.pos[0]:

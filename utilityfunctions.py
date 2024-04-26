@@ -8,6 +8,12 @@ import csv
 
 
 def DrawHealthBar(screen,health):
+    """
+        Draws the health bar at the top right corner of the screen
+        Args:
+            screen: The pygame screen object to render this to
+            health: The current health of the player
+    """
     heartimg = pygame.transform.scale_by(pygame.image.load("./Assets/heartim.png"),0.045)
     heart = pygame.Surface((50,50),pygame.SRCALPHA)
     heart.blit(heartimg,(0,0))
@@ -17,6 +23,12 @@ def DrawHealthBar(screen,health):
     screen.blit(heart,(800,30))
 
 def DisplayScore(screen,score):
+    """
+        Displays the score at the top right corner of the screen
+        Args:
+            screen: The pygame screen object to render this to
+            score: The current score of the player
+    """
     Smolfont = pygame.font.Font('./Assets/ThaleahFat.ttf',60)
     Score = Smolfont.render(f'Score: {score}',False,(54, 65, 83))
     Scoreact = Smolfont.render(f'Score: {score}',False,(255, 255, 255))
@@ -27,6 +39,9 @@ def DisplayScore(screen,score):
     screen.blit(Scoreact,(1215 - Score.get_rect().width,80))
 
 def updateleaderboard(newname = "",newscore = -1):
+    """
+        Update the leader board with the new name and new score if the score is in the top four
+    """
     leaderboard = []
     with open(LEADERBOARDFILE) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -53,6 +68,11 @@ def updateleaderboard(newname = "",newscore = -1):
             writer.writerow([row[1], row[0]])
 
 def getleaderboard():
+    """
+    gets the leaderboard from the leaderboard file
+    Returns:
+        list of tuples containing the name and score of the top four
+    """
     leaderboard = []
     with open(LEADERBOARDFILE) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -65,12 +85,13 @@ def getleaderboard():
                 if len(row)!=0:
                     leaderboard.append((row[1],row[0]))
     return leaderboard
-    
         
-
-
-# Loads the TileMap from location given to it
 def loadTileMap(file):
+    """
+    Loads the TileMap from file location given to it
+    Args:
+        file: file to load the tilemap from
+    """
     size = (64,64)
     margin = 0
     spacing = 0
@@ -91,8 +112,12 @@ def loadTileMap(file):
     print(f"loaded tileset with {len(tiles)} tiles from file : {file}")
     return tiles
 
-#scales the maze map generated to make the paths 3 wide
 def scalemapup(map):
+    """
+    Scales the maze map generated to make the paths 3 wide
+    Args:
+        map: the map to scale by a factor of three
+    """
     newmap = []
     for i in range(len(map)*3):
         row = []
@@ -111,9 +136,16 @@ def scalemapup(map):
     newmap[len(newmap)-7][len(newmap[0])-1] = 2
     return newmap
 
-#renders the map onto a specified screen
-#Only renders those tiles which can be seen on the screen
 def renderMap(map,screen,tiles,offset):
+    """
+    renders the map onto a specified screen
+    Only renders those tiles which can be seen on the screen
+    Args:
+        map: the map to render
+        screen:the screen to render it to
+        tiles:the loaded tileset
+        offset:the offset for screen for screenscrolling
+    """
     for y in range(len(map)):
         for x in range(len(map[0])):
             if(64*x >= offset[0] - 50 and 64*x<=offset[0]+SCREENSIZE[0]+50 and 64*y >= offset[1]-128 and 64*y <= offset[1] + SCREENSIZE[1]+128):
@@ -202,6 +234,13 @@ def renderMap(map,screen,tiles,offset):
                     screen.blit(tiles[45],(64*x,64*y)) 
 
 def spawngraves(map,tiles,player):
+    """
+    spawns graves on the map using the chance in the settings file
+    Args:
+        map: the map to spawn the graves on
+        tiles: the loaded tileset
+        player: the player object
+    """
     enemies = []
     offset = (0,0)
     for y in range(len(map)):
@@ -215,6 +254,14 @@ def spawngraves(map,tiles,player):
     return enemies
 
 def spawnchests(map,tiles,player,enemies):
+    """
+    spawns Chests on the map using the chance in the settings file
+    also spawns wizards to guard the chests
+    Args:
+        map: the map to spawn the Chests on
+        tiles: the loaded tileset
+        player: the player object
+    """
     interactables = []
     offset = (0,0)
     for y in range(len(map)):
