@@ -5,6 +5,7 @@ from EvilWizard import EvilWizard
 from Chests import Chest
 from Graves import Grave
 import csv
+import time
 
 
 def DrawHealthBar(screen,health):
@@ -311,7 +312,10 @@ def generatepath(map):
         path =[]
         prev = cur
         pathletter = []
-        while(maze[cur[0]][cur[1]][1][0] != -1 ):
+        t = time.time()
+        while((maze[cur[0]][cur[1]][1][0] != -1) ):
+            if(time.time() - t > 0.05):
+                return False
             path.append(cur)
             prev = cur
             cur = maze[cur[0]][cur[1]][1]
@@ -326,3 +330,4 @@ def generatepath(map):
         pathletter.reverse()
         f = open("path.txt",'w')
         f.write(pathletter.__str__())
+        return True

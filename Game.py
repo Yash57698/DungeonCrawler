@@ -69,7 +69,9 @@ class Game:
 
         self.map = generateMaze(Settings.MAZEDIM[0],Settings.MAZEDIM[1])
         self.map = scalemapup(self.map)
-        generatepath(self.map)
+        while(not generatepath(self.map)):
+            self.map = generateMaze(Settings.MAZEDIM[0],Settings.MAZEDIM[1])
+            self.map = scalemapup(self.map)
         self.running = True
 
 
