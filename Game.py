@@ -69,6 +69,7 @@ class Game:
 
         self.map = generateMaze(Settings.MAZEDIM[0],Settings.MAZEDIM[1])
         self.map = scalemapup(self.map)
+        generatepath(self.map)
         self.running = True
 
 
@@ -559,7 +560,7 @@ class Game:
             MainMenuact = Smolfont.render('Main Menu',False,color[0])
 
             cnt = 0
-            for i in leaderboard:
+            for i in leaderboard[:4]:
                 ren = Smolfont.render(f"{i[1]}    {i[0]}",False,(54, 65, 83))
                 renact = Smolfont.render(f"{i[1]}    {i[0]}",False,(255,255,255))
                 self.screen.blit(ren, (SCREENSIZE[0]/2 - (ren.get_rect().size[0]/2)-4, 100+(cnt*80)-4))

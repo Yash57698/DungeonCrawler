@@ -57,8 +57,6 @@ def updateleaderboard(newname = "",newscore = -1):
             leaderboard.append((newscore,newname))
         print(leaderboard)
         leaderboard.sort(reverse=True)
-
-        leaderboard = leaderboard[:-1]
     
     with open(LEADERBOARDFILE, mode='w') as file:
         writer = csv.writer(file, delimiter=',')
@@ -276,3 +274,55 @@ def spawnchests(map,tiles,player,enemies):
                         if k<= Settings.WIZARDSPAWNCHANCE:
                             enemies.append(EvilWizard(tiles[111],(64*x,64*y),tiles,player,map))
     return interactables
+
+def generatepath(map):
+        """
+            finds a path to the start to the end
+        """
+        stk = []
+        start = (0,0)
+        end = (len(map)-6,len(map[0])-1)
+        stk.append(start)
+        maze = []
+        for i in range(len(map)):
+            row = []
+            for j in range(len(map[0])):
+                row.append((400,(-1,-1)))
+            maze.append(row)
+        maze[start[0]][start[1]] = (0,(-1,-1))
+        while len(stk) >0:
+            y,x = stk.pop(0)
+            if y == end[0] and x == end[1]:
+                break
+            if y!=0 and map[y-1][x] == 0 and maze[y-1][x][0] == 400:
+                maze[y-1][x] = (maze[y][x][0] +1,(y,x))
+                stk.append((y-1,x))
+            if x!=0 and map[y][x-1] == 0 and maze[y][x-1][0] == 400:
+                maze[y][x-1] = (maze[y][x][0] +1,(y,x))
+                stk.append((y,x-1))
+            if y!=len(map)-1 and map[y+1][x] == 0 and maze[y+1][x][0] == 400:
+                maze[y+1][x] = (maze[y][x][0] +1,(y,x))
+                stk.append((y+1,x))
+            if x!=len(map[0])-1 and map[y][x+1] == 0 and maze[y][x+1][0] == 400:
+                maze[y][x+1] = (maze[y][x][0] +1,(y,x))
+                stk.append((y,x+1))
+
+        cur = (end[0],end[1])
+        path =[]
+        prev = cur
+        pathletter = []
+        while(maze[cur[0]][cur[1]][1][0] != -1 ):
+            path.append(cur)
+            prev = cur
+            cur = maze[cur[0]][cur[1]][1]
+            if prev[0]>cur[0]:
+                pathletter.append('D')
+            elif prev[0]<cur[0]:
+                pathletter.append('U')
+            elif prev[1]>cur[1]:
+                pathletter.append('R')
+            elif prev[1]<cur[1]:
+                pathletter.append('L')
+        pathletter.reverse()
+        f = open("path.txt",'w')
+        f.write(pathletter.__str__())
